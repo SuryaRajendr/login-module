@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { getProfile, updateProfileByMobile } from "../services/profileApi";
+import { getProfile, updateProfile } from "../services/profileApi";
 
 const roleCopy = {
   admin: {
@@ -46,23 +46,25 @@ const Profile = ({ role }) => {
     location: profile.location || "",
     businessName: profile.businessName || "",
     businessType: profile.businessType || role,
+    uniqueUserId: profile.uniqueUserId || user?.uniqueUserId || "",
     image: profile.image || "",
     about: profile.about || "",
     specialty: profile.specialty || "",
     availability: profile.availability || "Available",
+    updatedAt: profile.updatedAt || "",
   });
 
   useEffect(() => {
     let isMounted = true;
 
     const loadProfile = async () => {
-      if (!user?.mobile) {
+      if (!user?.token) {
         return;
       }
 
       try {
-        setStatus("Loading profile from MongoDB...");
-        const savedProfile = await getProfile({ mobile: user.mobile, role });
+        setStatus("Loading profile from MySQL...");
+        const savedProfile = await getProfile(user.token);
 
         if (!isMounted) {
           return;
@@ -83,7 +85,7 @@ const Profile = ({ role }) => {
     return () => {
       isMounted = false;
     };
-  }, [role, user?.mobile]);
+  }, [role, user?.token]);
 
   const completion = useMemo(() => {
     const requiredFields = [
@@ -132,15 +134,15 @@ const Profile = ({ role }) => {
     }
 
     try {
-      setStatus("Saving profile to MongoDB...");
-      const savedProfile = await updateProfileByMobile(formData.mobile, {
+      setStatus("Saving profile to MySQL...");
+      const savedProfile = await updateProfile(user.token, {
         ...formData,
         role,
       });
       setFormData((current) => ({ ...current, ...savedProfile }));
       setUserProfile(savedProfile);
       setIsEditing(false);
-      setStatus("Profile updated in MongoDB.");
+      setStatus("Profile updated in MySQL.");
     } catch (error) {
       setStatus(error.message);
     }
@@ -164,6 +166,11 @@ const Profile = ({ role }) => {
           <p className="profile-kicker">{copy.title}</p>
           <h1>{formData.name || "Complete your profile"}</h1>
           <p>{copy.subtitle}</p>
+          <div className="profile-meta">
+            <span>{formData.uniqueUserId || "New user"}</span>
+            <span>{formData.email || "Mail ID not added"}</span>
+            <span>{formData.location || "Location not added"}</span>
+          </div>
 
           <div className="profile-actions">
             <button type="button" onClick={() => setIsEditing((value) => !value)}>
@@ -201,6 +208,15 @@ const Profile = ({ role }) => {
               <label>
                 Mobile Number
                 <input name="mobile" value={formData.mobile} disabled />
+              </label>
+
+              <label>
+                Business Type
+                <input
+                  name="businessType"
+                  value={formData.businessType}
+                  onChange={handleChange}
+                />
               </label>
 
               <label>
@@ -275,6 +291,10 @@ const Profile = ({ role }) => {
                 <strong>{formData.mobile || "Not added"}</strong>
               </div>
               <div>
+                <span>User ID</span>
+                <strong>{formData.uniqueUserId || "Not assigned"}</strong>
+              </div>
+              <div>
                 <span>Mail ID</span>
                 <strong>{formData.email || "Not added"}</strong>
               </div>
@@ -285,6 +305,10 @@ const Profile = ({ role }) => {
               <div>
                 <span>Business</span>
                 <strong>{formData.businessName || "Not added"}</strong>
+              </div>
+              <div>
+                <span>Business Type</span>
+                <strong>{formData.businessType || "Not added"}</strong>
               </div>
               <div>
                 <span>{copy.specialtyLabel}</span>
@@ -304,7 +328,15 @@ const Profile = ({ role }) => {
           <div className="mini-panel accent-panel">
             <span className="mini-label">Role</span>
             <strong>{role.toUpperCase()}</strong>
-            <p>Profile changes are saved by mobile number and restored on the next login.</p>
+            <p>Profile changes are saved in MySQL and restored with your JWT login.</p>
+          </div>
+
+          <div className="mini-panel">
+            <span className="mini-label">Last Update</span>
+            <strong>
+              {formData.updatedAt ? new Date(formData.updatedAt).toLocaleString() : "Not updated yet"}
+            </strong>
+            <p>{formData.uniqueUserId || "Your unique profile ID will appear here."}</p>
           </div>
         </aside>
       </div>

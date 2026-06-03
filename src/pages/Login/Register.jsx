@@ -11,6 +11,7 @@ const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
     mobile: "",
+    email: "",
     location: "",
     businessName: "",
     role: "Supplier",
@@ -61,6 +62,14 @@ const Register = () => {
             name="mobile"
             placeholder="Mobile Number"
             value={formData.mobile}
+            onChange={handleChange}
+          />
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Mail ID"
+            value={formData.email}
             onChange={handleChange}
           />
 

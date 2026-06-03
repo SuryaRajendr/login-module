@@ -27,9 +27,15 @@ export const toFrontendUser = (authData) => {
       mobile: authData.user.mobile_number,
       role,
       location: authData.user.location || "",
+      email: authData.user.email || "",
       businessName: authData.user.business_name || "",
       businessType: authData.user.business_type || role,
+      specialty: authData.user.specialty || "",
+      availability: authData.user.availability || "Available",
+      about: authData.user.about || "",
+      image: authData.user.profile_image || "",
       createdAt: authData.user.created_at,
+      updatedAt: authData.user.updated_at,
     },
   };
 };
@@ -55,6 +61,7 @@ export const registerUser = async (formData) => {
     body: JSON.stringify({
       name: formData.name,
       mobile_number: formData.mobile,
+      email: formData.email,
       role: formData.role,
       location: formData.location,
       business_name: formData.businessName,

@@ -202,6 +202,25 @@ button {
   max-width: 620px;
 }
 
+.profile-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.profile-meta span {
+  max-width: 220px;
+  overflow-wrap: anywhere;
+  padding: 7px 10px;
+  border: 1px solid #dbeafe;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #1f2937;
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .profile-kicker {
   color: #2563eb !important;
   font-weight: 700;

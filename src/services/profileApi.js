@@ -1,39 +1,59 @@
 const parseResponse = async (response) => {
   const data = await response.json().catch(() => ({}));
 
-  if (!response.ok) {
+  if (!response.ok || data.success === false) {
     throw new Error(data.message || "Profile request failed.");
   }
 
-  return data;
+  return data.data;
 };
 
-export const getProfile = async ({ mobile, role }) => {
-  const params = new URLSearchParams({ role: role || "" });
-  const response = await fetch(`/api/profiles/${mobile}?${params.toString()}`);
-  return parseResponse(response);
-};
+const toProfile = (user) => ({
+  id: user.id,
+  uniqueUserId: user.unique_user_id,
+  name: user.name || "",
+  mobile: user.mobile_number || "",
+  email: user.email || "",
+  role: (user.role || "").toLowerCase(),
+  location: user.location || "",
+  businessName: user.business_name || "",
+  businessType: user.business_type || "",
+  specialty: user.specialty || "",
+  availability: user.availability || "Available",
+  about: user.about || "",
+  image: user.profile_image || "",
+  createdAt: user.created_at,
+  updatedAt: user.updated_at,
+});
 
-export const saveProfile = async (profile) => {
-  const response = await fetch("/api/profiles", {
-    method: "POST",
+export const getProfile = async (token) => {
+  const response = await fetch("/api/profile/me", {
     headers: {
-      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(profile),
   });
-
-  return parseResponse(response);
+  return toProfile(await parseResponse(response));
 };
 
-export const updateProfileByMobile = async (mobile, profile) => {
-  const response = await fetch(`/api/profiles/${mobile}`, {
+export const updateProfile = async (token, profile) => {
+  const response = await fetch("/api/profile/me", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(profile),
+    body: JSON.stringify({
+      name: profile.name,
+      email: profile.email,
+      location: profile.location,
+      business_name: profile.businessName,
+      business_type: profile.businessType,
+      specialty: profile.specialty,
+      availability: profile.availability,
+      about: profile.about,
+      profile_image: profile.image,
+    }),
   });
 
-  return parseResponse(response);
+  return toProfile(await parseResponse(response));
 };
