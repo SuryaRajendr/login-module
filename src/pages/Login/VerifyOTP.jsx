@@ -2,36 +2,36 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { loginWithMobile } from "../../services/authApi";
 
 const VerifyOTP = () => {
   const [otp, setOtp] = useState("");
+  const [status, setStatus] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     if (otp !== "1234") {
       alert("Invalid OTP");
       return;
     }
 
     const mobile = localStorage.getItem("mobile");
-
-    let role = "";
-
-    if (mobile === "9999999999") {
-      role = "admin";
-    } else if (mobile.endsWith("1")) {
-      role = "supplier";
-    } else {
-      role = "vendor";
+    if (!mobile) {
+      navigate("/login");
+      return;
     }
 
-    login({
-      mobile,
-      role,
-    });
+    try {
+      setStatus("Logging in...");
+      const user = await loginWithMobile(mobile);
 
-    navigate(`/${role}/dashboard`);
+      login(user);
+      localStorage.removeItem("mobile");
+      navigate(user.redirectTo || `/${user.role}/dashboard`);
+    } catch (error) {
+      setStatus(error.message);
+    }
   };
 
   return (
@@ -49,6 +49,8 @@ const VerifyOTP = () => {
         <button onClick={handleVerify}>
           Verify OTP
         </button>
+
+        {status && <p className="auth-status">{status}</p>}
 
         <p style={{ marginTop: "15px", textAlign: "center" }}>
           Demo OTP: 1234

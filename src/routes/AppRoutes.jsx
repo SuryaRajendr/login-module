@@ -8,6 +8,7 @@ import Register from "../pages/Login/Register";
 import AdminDashboard from "../pages/Admin/Dashboard";
 import SupplierDashboard from "../pages/Supplier/Dashboard";
 import VendorDashboard from "../pages/Vendor/Dashboard";
+import ProfilePage from "../pages/Profile/ProfilePage";
 
 import ProtectedRoute from "../components/ProtectedRoute";
 
@@ -31,6 +32,15 @@ const AppRoutes = () => {
       />
 
       <Route
+        path="/admin/profile"
+        element={
+          <ProtectedRoute role="admin">
+            <ProfilePage role="admin" />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
         path="/supplier/dashboard"
         element={
           <ProtectedRoute role="supplier">
@@ -40,10 +50,28 @@ const AppRoutes = () => {
       />
 
       <Route
+        path="/supplier/profile"
+        element={
+          <ProtectedRoute role="supplier">
+            <ProfilePage role="supplier" />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
         path="/vendor/dashboard"
         element={
           <ProtectedRoute role="vendor">
             <VendorDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/vendor/profile"
+        element={
+          <ProtectedRoute role="vendor">
+            <ProfilePage role="vendor" />
           </ProtectedRoute>
         }
       />

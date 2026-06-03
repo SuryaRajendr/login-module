@@ -18,8 +18,18 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const setUserProfile = (profileData) => {
+    if (!user?.mobile) {
+      return;
+    }
+
+    const updatedUser = { ...user, profile: profileData };
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    setUser(updatedUser);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, setUserProfile }}>
       {children}
     </AuthContext.Provider>
   );

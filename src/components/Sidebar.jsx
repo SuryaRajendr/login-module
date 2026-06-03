@@ -7,7 +7,7 @@ const Sidebar = ({ role }) => {
       <h2>{role.toUpperCase()}</h2>
 
       <Link to={`/${role}/dashboard`}>Dashboard</Link>
-      <Link to="#">Profile</Link>
+      <Link to={`/${role}/profile`}>Profile</Link>
       <Link to="#">Settings</Link>
     </div>
   );
