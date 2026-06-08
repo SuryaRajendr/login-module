@@ -13,7 +13,10 @@ const Navbar = () => {
 
   return (
     <div className="navbar">
-      <h3>{user?.role?.toUpperCase()} PANEL</h3>
+      <div>
+        <p className="navbar-label">Welcome back</p>
+        <h3>{user?.name || user?.role || "Supplier"}</h3>
+      </div>
 
       <button className="logout-btn" onClick={handleLogout}>
         Logout

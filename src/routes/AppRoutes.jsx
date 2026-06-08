@@ -7,6 +7,9 @@ import Register from "../pages/Login/Register";
 
 import AdminDashboard from "../pages/Admin/Dashboard";
 import SupplierDashboard from "../pages/Supplier/Dashboard";
+import SupplierStockList from "../pages/Supplier/StockList";
+import SupplierAddProduct from "../pages/Supplier/AddProduct";
+import SupplierVendorRequests from "../pages/Supplier/VendorRequests";
 import VendorDashboard from "../pages/Vendor/Dashboard";
 import ProfilePage from "../pages/Profile/ProfilePage";
 
@@ -45,6 +48,33 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute role="supplier">
             <SupplierDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/supplier/stock-list"
+        element={
+          <ProtectedRoute role="supplier">
+            <SupplierStockList />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/supplier/add-product"
+        element={
+          <ProtectedRoute role="supplier">
+            <SupplierAddProduct />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/supplier/vendor-requests"
+        element={
+          <ProtectedRoute role="supplier">
+            <SupplierVendorRequests />
           </ProtectedRoute>
         }
       />
