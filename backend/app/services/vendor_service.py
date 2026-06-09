@@ -5,6 +5,7 @@ from app.models.product import Product
 from app.models.user import User
 from app.models.vendor_request import VendorRequest
 from app.schemas.vendor import VendorRequestCreate
+from app.services.notification_service import create_notification
 
 
 def get_vendor_products(db: Session) -> list[dict]:
@@ -51,6 +52,16 @@ def create_vendor_request(db: Session, vendor_id: int, payload: VendorRequestCre
     db.refresh(request)
 
     supplier = db.scalar(select(User).where(User.id == product.supplier_id))
+    vendor = db.scalar(select(User).where(User.id == vendor_id))
+
+    create_notification(
+        db,
+        product.supplier_id,
+        title="New vendor request",
+        message=f"{vendor.name if vendor else 'A vendor'} requested {request.quantity} x {product.name}.",
+        notification_type="VendorRequestCreated",
+        related_order_id=None,
+    )
     return {
         "id": request.id,
         "vendor_id": request.vendor_id,

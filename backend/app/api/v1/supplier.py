@@ -10,6 +10,7 @@ from app.schemas.product import (
     ProductResponse,
     ProductUpdate,
 )
+from app.schemas.vendor import SupplierVendorRequestResponse, VendorRequestResponse, VendorRequestStatusUpdate
 from app.services.product_service import (
     create_product,
     delete_product,
@@ -18,6 +19,7 @@ from app.services.product_service import (
     get_supplier_dashboard_stats,
     update_product,
 )
+from app.services.order_service import get_vendor_requests_for_supplier, update_vendor_request_status
 
 router = APIRouter()
 
@@ -77,3 +79,31 @@ def delete_existing_product(
 
     delete_product(db, product)
     return ApiResponse(success=True, message="Product deleted successfully.", data=None)
+
+@router.get("/vendor-requests", response_model=ApiResponse[list[SupplierVendorRequestResponse]])
+def list_vendor_requests(
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> ApiResponse[list[VendorRequestResponse]]:
+    requests = get_vendor_requests_for_supplier(db, current_user.id)
+    return ApiResponse(success=True, message="Vendor requests fetched successfully.", data=requests)
+
+
+@router.put(
+    "/vendor-requests/{request_id}/status",
+    response_model=ApiResponse[VendorRequestResponse],
+)
+def update_vendor_request(
+    request_id: int,
+    payload: VendorRequestStatusUpdate,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> ApiResponse[VendorRequestResponse]:
+    try:
+        updated_request = update_vendor_request_status(db, request_id, payload.status, current_user)
+    except PermissionError as exc:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+
+    return ApiResponse(success=True, message="Request status updated successfully.", data=updated_request)

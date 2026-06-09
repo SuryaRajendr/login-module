@@ -14,6 +14,9 @@ import VendorDashboard from "../pages/Vendor/Dashboard";
 import VendorBrowseProducts from "../pages/Vendor/BrowseProducts";
 import VendorMyOrders from "../pages/Vendor/MyOrders";
 import VendorRequestProduct from "../pages/Vendor/RequestProduct";
+import SupplierOrders from "../pages/Supplier/Orders";
+import AdminOrders from "../pages/Admin/Orders";
+import AdminReports from "../pages/Admin/Reports";
 import ProfilePage from "../pages/Profile/ProfilePage";
 
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -83,10 +86,37 @@ const AppRoutes = () => {
       />
 
       <Route
+        path="/supplier/orders"
+        element={
+          <ProtectedRoute role="supplier">
+            <SupplierOrders />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
         path="/supplier/profile"
         element={
           <ProtectedRoute role="supplier">
             <ProfilePage role="supplier" />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/orders"
+        element={
+          <ProtectedRoute role="admin">
+            <AdminOrders />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/reports"
+        element={
+          <ProtectedRoute role="admin">
+            <AdminReports />
           </ProtectedRoute>
         }
       />

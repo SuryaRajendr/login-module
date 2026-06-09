@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS orders (
   CONSTRAINT fk_orders_request FOREIGN KEY (request_id) REFERENCES vendor_requests (id)
 );
 
+<<<<<<< HEAD
 CREATE TABLE IF NOT EXISTS vendor_requests (
   id INT NOT NULL AUTO_INCREMENT,
   vendor_id INT NOT NULL,
@@ -98,4 +99,31 @@ CREATE TABLE IF NOT EXISTS orders (
   UNIQUE KEY uq_orders_order_number (order_number),
   KEY ix_orders_request_id (request_id),
   CONSTRAINT fk_orders_request FOREIGN KEY (request_id) REFERENCES vendor_requests (id)
+=======
+CREATE TABLE IF NOT EXISTS notifications (
+  id INT NOT NULL AUTO_INCREMENT,
+  user_id INT NOT NULL,
+  title VARCHAR(200) NOT NULL,
+  message LONGTEXT NULL,
+  notification_type VARCHAR(50) NOT NULL,
+  related_order_id INT NULL,
+  is_read BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY ix_notifications_user_id (user_id),
+  KEY ix_notifications_related_order_id (related_order_id),
+  CONSTRAINT fk_notifications_user FOREIGN KEY (user_id) REFERENCES users (id),
+  CONSTRAINT fk_notifications_order FOREIGN KEY (related_order_id) REFERENCES orders (id)
+);
+
+CREATE TABLE IF NOT EXISTS reports (
+  id INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(120) NOT NULL,
+  report_type VARCHAR(80) NOT NULL,
+  filter_start VARCHAR(30) NULL,
+  filter_end VARCHAR(30) NULL,
+  data LONGTEXT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+>>>>>>> 50d2477 (NOTIFICATION)
 );

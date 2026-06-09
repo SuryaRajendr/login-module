@@ -41,12 +41,31 @@ class VendorRequestResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class VendorRequestStatusUpdate(BaseModel):
+    status: str
+
+
 class VendorOrderResponse(BaseModel):
     id: int
     request_id: int
     product_name: str
     supplier_name: str
     quantity: int
+    status: str
+    created_at: datetime
+    updated_at: datetime | None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class SupplierVendorRequestResponse(BaseModel):
+    id: int
+    vendor_id: int
+    product_id: int
+    product_name: str
+    vendor_name: str
+    quantity: int
+    message: str | None = None
     status: str
     created_at: datetime
     updated_at: datetime | None

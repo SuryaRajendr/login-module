@@ -14,10 +14,18 @@ const Sidebar = ({ role }) => {
 
   const isActive = (path) => location.pathname === path;
 
+  const adminMenu = [
+    { label: "Dashboard", path: "/admin/dashboard" },
+    { label: "Orders", path: "/admin/orders" },
+    { label: "Reports", path: "/admin/reports" },
+    { label: "Profile", path: "/admin/profile" },
+  ];
+
   const supplierMenu = [
     { label: "Dashboard", path: "/supplier/dashboard" },
     { label: "Stock List", path: "/supplier/stock-list" },
     { label: "Add Product", path: "/supplier/add-product" },
+    { label: "Orders", path: "/supplier/orders" },
     { label: "Vendor Requests", path: "/supplier/vendor-requests" },
     { label: "Profile", path: "/supplier/profile" },
   ];
@@ -30,7 +38,7 @@ const Sidebar = ({ role }) => {
     { label: "Profile", path: "/vendor/profile" },
   ];
 
-  const menu = role === "supplier" ? supplierMenu : vendorMenu;
+  const menu = role === "supplier" ? supplierMenu : role === "admin" ? adminMenu : vendorMenu;
 
   return (
     <div className="sidebar">
