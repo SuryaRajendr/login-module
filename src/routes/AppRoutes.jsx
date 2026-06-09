@@ -11,6 +11,9 @@ import SupplierStockList from "../pages/Supplier/StockList";
 import SupplierAddProduct from "../pages/Supplier/AddProduct";
 import SupplierVendorRequests from "../pages/Supplier/VendorRequests";
 import VendorDashboard from "../pages/Vendor/Dashboard";
+import VendorBrowseProducts from "../pages/Vendor/BrowseProducts";
+import VendorMyOrders from "../pages/Vendor/MyOrders";
+import VendorRequestProduct from "../pages/Vendor/RequestProduct";
 import ProfilePage from "../pages/Profile/ProfilePage";
 
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -93,6 +96,33 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute role="vendor">
             <VendorDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/vendor/browse-products"
+        element={
+          <ProtectedRoute role="vendor">
+            <VendorBrowseProducts />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/vendor/request-product"
+        element={
+          <ProtectedRoute role="vendor">
+            <VendorRequestProduct />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/vendor/my-orders"
+        element={
+          <ProtectedRoute role="vendor">
+            <VendorMyOrders />
           </ProtectedRoute>
         }
       />

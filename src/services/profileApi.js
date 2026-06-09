@@ -1,12 +1,4 @@
-const parseResponse = async (response) => {
-  const data = await response.json().catch(() => ({}));
-
-  if (!response.ok || data.success === false) {
-    throw new Error(data.message || "Profile request failed.");
-  }
-
-  return data.data;
-};
+import api from "./api/apiClient";
 
 const toProfile = (user) => ({
   id: user.id,
@@ -27,22 +19,23 @@ const toProfile = (user) => ({
 });
 
 export const getProfile = async (token) => {
-  const response = await fetch("/api/profile/me", {
+  const response = await api.get("/api/profile/me", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  return toProfile(await parseResponse(response));
+
+  if (!response.data?.success) {
+    throw new Error(response.data?.message || "Profile request failed.");
+  }
+
+  return toProfile(response.data.data);
 };
 
 export const updateProfile = async (token, profile) => {
-  const response = await fetch("/api/profile/me", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
+  const response = await api.put(
+    "/api/profile/me",
+    {
       name: profile.name,
       email: profile.email,
       location: profile.location,
@@ -52,8 +45,17 @@ export const updateProfile = async (token, profile) => {
       availability: profile.availability,
       about: profile.about,
       profile_image: profile.image,
-    }),
-  });
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
-  return toProfile(await parseResponse(response));
+  if (!response.data?.success) {
+    throw new Error(response.data?.message || "Profile update failed.");
+  }
+
+  return toProfile(response.data.data);
 };

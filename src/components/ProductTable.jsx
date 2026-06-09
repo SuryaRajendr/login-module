@@ -1,4 +1,4 @@
-const ProductTable = ({ products }) => {
+const ProductTable = ({ products, onDelete, onEdit, onView }) => {
   const getStatusClass = (status) => {
     return `status-badge ${status.toLowerCase().replace(/\s+/g, "-")}`;
   };
@@ -41,9 +41,9 @@ const ProductTable = ({ products }) => {
                   <span className={getStatusClass(product.status)}>{product.status}</span>
                 </td>
                 <td className="table-actions">
-                  <button>Edit</button>
-                  <button>Delete</button>
-                  <button>View</button>
+                  <button onClick={() => onEdit && onEdit(product)}>Edit</button>
+                  <button onClick={() => onDelete && onDelete(product.id)}>Delete</button>
+                  <button onClick={() => onView && onView(product)}>View</button>
                 </td>
               </tr>
             ))}

@@ -1,12 +1,4 @@
-const parseResponse = async (response) => {
-  const data = await response.json().catch(() => ({}));
-
-  if (!response.ok || data.success === false) {
-    throw new Error(data.message || "Authentication request failed.");
-  }
-
-  return data.data;
-};
+import api from "./api/apiClient";
 
 const normalizeRole = (role = "") => role.toLowerCase();
 
@@ -41,43 +33,45 @@ export const toFrontendUser = (authData) => {
 };
 
 export const loginWithMobile = async (mobileNumber) => {
-  const response = await fetch("/api/auth/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ mobile_number: mobileNumber }),
+  const response = await api.post("/api/auth/login", {
+    mobile_number: mobileNumber,
   });
 
-  return toFrontendUser(await parseResponse(response));
+  if (!response.data?.success) {
+    throw new Error(response.data?.message || "Authentication request failed.");
+  }
+
+  return toFrontendUser(response.data.data);
 };
 
 export const registerUser = async (formData) => {
-  const response = await fetch("/api/auth/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: formData.name,
-      mobile_number: formData.mobile,
-      email: formData.email,
-      role: formData.role,
-      location: formData.location,
-      business_name: formData.businessName,
-      business_type: formData.businessType,
-    }),
+  const response = await api.post("/api/auth/register", {
+    name: formData.name,
+    mobile_number: formData.mobile,
+    email: formData.email,
+    role: formData.role,
+    location: formData.location,
+    business_name: formData.businessName,
+    business_type: formData.businessType,
   });
 
-  return toFrontendUser(await parseResponse(response));
+  if (!response.data?.success) {
+    throw new Error(response.data?.message || "Registration request failed.");
+  }
+
+  return toFrontendUser(response.data.data);
 };
 
 export const getLoggedInUser = async (token) => {
-  const response = await fetch("/api/auth/me", {
+  const response = await api.get("/api/auth/me", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
-  return parseResponse(response);
+  if (!response.data?.success) {
+    throw new Error(response.data?.message || "Failed to fetch logged in user.");
+  }
+
+  return response.data.data;
 };
