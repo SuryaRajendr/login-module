@@ -8,6 +8,8 @@ const VendorRequests = () => {
   const { loading, error, run, setError } = useAsync();
   const [requests, setRequests] = useState([]);
 
+  const [actionLoadingId, setActionLoadingId] = useState(null);
+
   useEffect(() => {
     const loadRequests = async () => {
       const { data, error: loadError } = await run(supplierApi.getVendorRequests);
@@ -21,6 +23,19 @@ const VendorRequests = () => {
 
     loadRequests();
   }, [run, setError]);
+
+  const handleRequestAction = async (requestId, status) => {
+    setActionLoadingId(requestId);
+    setError(null);
+    try {
+      const updated = await supplierApi.updateVendorRequestStatus(requestId, status);
+      setRequests((prev) => prev.map((item) => (item.id === requestId ? updated : item)));
+    } catch (err) {
+      setError(err);
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
 
   return (
     <DashboardLayout role="supplier">
@@ -50,6 +65,22 @@ const VendorRequests = () => {
                 <p>{`Quantity: ${request.quantity}`}</p>
                 {request.message && <p>{request.message}</p>}
                 <span className={`status-badge ${request.status.toLowerCase()}`}>{request.status}</span>
+                <div className="request-actions">
+                  <button
+                    className="btn-primary"
+                    disabled={actionLoadingId === request.id || request.status !== "Pending"}
+                    onClick={() => handleRequestAction(request.id, "Approved")}
+                  >
+                    Approve
+                  </button>
+                  <button
+                    className="btn-secondary"
+                    disabled={actionLoadingId === request.id || request.status !== "Pending"}
+                    onClick={() => handleRequestAction(request.id, "Rejected")}
+                  >
+                    Reject
+                  </button>
+                </div>
               </div>
             ))}
           </div>

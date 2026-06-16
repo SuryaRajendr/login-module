@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import OrderDetailsModal from "./OrderDetailsModal";
 import { getErrorMessage } from "../utils/errorParser";
 
-const statusOptions = ["Pending", "Approved", "Shipped", "Delivered", "Completed", "Cancelled"];
+const statusOptions = ["Pending", "Approved", "Rejected", "Processing", "Completed"];
 
 const OrderManagementTable = ({
   title,
