@@ -6,6 +6,9 @@ import VerifyOTP from "../pages/Login/VerifyOTP";
 import Register from "../pages/Login/Register";
 
 import AdminDashboard from "../pages/Admin/Dashboard";
+import AdminInvoices from "../pages/Admin/Invoices";
+import AdminBilling from "../pages/Admin/Billing";
+import AdminPayments from "../pages/Admin/Payments";
 import SupplierDashboard from "../pages/Supplier/Dashboard";
 import SupplierStockList from "../pages/Supplier/StockList";
 import SupplierAddProduct from "../pages/Supplier/AddProduct";
@@ -45,6 +48,33 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute role="admin">
             <ProfilePage role="admin" />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/invoices"
+        element={
+          <ProtectedRoute role="admin">
+            <AdminInvoices />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/billing"
+        element={
+          <ProtectedRoute role="admin">
+            <AdminBilling />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/payments"
+        element={
+          <ProtectedRoute role="admin">
+            <AdminPayments />
           </ProtectedRoute>
         }
       />

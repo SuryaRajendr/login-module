@@ -3,14 +3,34 @@ import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
 
+const normalizeRole = (value) => String(value || "").toLowerCase();
+
+const normalizeStoredUser = (storedUser) => {
+  if (!storedUser) {
+    return null;
+  }
+
+  return {
+    ...storedUser,
+    role: normalizeRole(storedUser.role),
+    profile: storedUser.profile
+      ? {
+          ...storedUser.profile,
+          role: normalizeRole(storedUser.profile.role || storedUser.role),
+        }
+      : storedUser.profile,
+  };
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("user")) || null
+    normalizeStoredUser(JSON.parse(localStorage.getItem("user")))
   );
 
   const login = (data) => {
-    localStorage.setItem("user", JSON.stringify(data));
-    setUser(data);
+    const normalizedUser = normalizeStoredUser(data);
+    localStorage.setItem("user", JSON.stringify(normalizedUser));
+    setUser(normalizedUser);
   };
 
   const logout = () => {
@@ -23,7 +43,13 @@ export const AuthProvider = ({ children }) => {
       return;
     }
 
-    const updatedUser = { ...user, profile: profileData };
+    const updatedUser = {
+      ...user,
+      profile: {
+        ...profileData,
+        role: normalizeRole(profileData.role || user.role),
+      },
+    };
     localStorage.setItem("user", JSON.stringify(updatedUser));
     setUser(updatedUser);
   };

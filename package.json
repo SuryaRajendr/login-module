@@ -1,4 +1,3 @@
-
 {
   "name": "react-role-auth-project-v2",
   "private": true,
@@ -17,6 +16,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "jspdf": "^4.2.1",
     "mongodb": "^6.12.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
