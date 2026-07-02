@@ -5,6 +5,7 @@ from app.api.deps import get_current_user
 from app.db.session import get_db
 from app.schemas.common import ApiResponse
 from app.schemas.product import (
+    BulkProductImportPayload,
     DashboardStatsResponse,
     ProductCreate,
     ProductResponse,
@@ -13,6 +14,7 @@ from app.schemas.product import (
 from app.schemas.vendor import SupplierVendorRequestResponse, VendorRequestResponse, VendorRequestStatusUpdate
 from app.services.product_service import (
     create_product,
+    create_products_bulk,
     delete_product,
     get_product_by_id,
     get_products_for_supplier,
@@ -50,6 +52,19 @@ def create_new_product(
 ) -> ApiResponse[ProductResponse]:
     product = create_product(db, current_user.id, payload)
     return ApiResponse(success=True, message="Product created successfully.", data=product)
+
+
+@router.post("/products/bulk", response_model=ApiResponse[list[ProductResponse]])
+def upload_products_bulk(
+    payload: BulkProductImportPayload,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> ApiResponse[list[ProductResponse]]:
+    if not payload.products:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No products provided for bulk upload.")
+
+    imported = create_products_bulk(db, current_user.id, payload.products)
+    return ApiResponse(success=True, message="Bulk upload completed.", data=imported)
 
 
 @router.put("/products/{product_id}", response_model=ApiResponse[ProductResponse])

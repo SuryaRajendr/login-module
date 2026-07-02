@@ -6,7 +6,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.routes import api_router
 from app.core.config import settings
-from app.db.migrations import ensure_user_profile_columns
+from app.db.migrations import ensure_user_profile_columns, ensure_product_columns
 from app.db.session import Base, engine
 from app.services.user_service import ensure_admin_user
 
@@ -50,6 +50,7 @@ def create_app() -> FastAPI:
     def on_startup() -> None:
         Base.metadata.create_all(bind=engine)
         ensure_user_profile_columns()
+        ensure_product_columns()
         ensure_admin_user()
 
     app.include_router(api_router, prefix="/api")

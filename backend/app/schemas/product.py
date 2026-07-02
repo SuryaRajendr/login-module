@@ -11,6 +11,8 @@ class ProductBase(BaseModel):
     price: float
     status: str = "In Stock"
     image_url: str | None = None
+    description: str | None = None
+    unit: str | None = None
 
 
 class ProductCreate(ProductBase):
@@ -25,6 +27,24 @@ class ProductUpdate(BaseModel):
     price: float | None = None
     status: str | None = None
     image_url: str | None = None
+    description: str | None = None
+    unit: str | None = None
+
+
+class BulkProductRow(BaseModel):
+    sku: str | None = None
+    name: str
+    category: str
+    description: str | None = None
+    price: float
+    stock: int
+    unit: str | None = None
+    image_url: str | None = None
+    status: str
+
+
+class BulkProductImportPayload(BaseModel):
+    products: list[BulkProductRow]
 
 
 class ProductResponse(ProductBase):

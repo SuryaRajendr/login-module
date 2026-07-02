@@ -12,16 +12,21 @@ PROFILE_COLUMNS = {
     "updated_at": "DATETIME NULL",
 }
 
+PRODUCT_COLUMNS = {
+    "description": "LONGTEXT NULL",
+    "unit": "VARCHAR(80) NULL",
+}
 
-def ensure_user_profile_columns() -> None:
+
+def ensure_columns(table_name: str, columns: dict[str, str]) -> None:
     inspector = inspect(engine)
-    if "users" not in inspector.get_table_names():
+    if table_name not in inspector.get_table_names():
         return
 
-    existing_columns = {column["name"] for column in inspector.get_columns("users")}
+    existing_columns = {column["name"] for column in inspector.get_columns(table_name)}
     missing_columns = [
         (name, definition)
-        for name, definition in PROFILE_COLUMNS.items()
+        for name, definition in columns.items()
         if name not in existing_columns
     ]
 
@@ -30,4 +35,12 @@ def ensure_user_profile_columns() -> None:
 
     with engine.begin() as connection:
         for name, definition in missing_columns:
-            connection.execute(text(f"ALTER TABLE users ADD COLUMN {name} {definition}"))
+            connection.execute(text(f"ALTER TABLE {table_name} ADD COLUMN {name} {definition}"))
+
+
+def ensure_user_profile_columns() -> None:
+    ensure_columns("users", PROFILE_COLUMNS)
+
+
+def ensure_product_columns() -> None:
+    ensure_columns("products", PRODUCT_COLUMNS)

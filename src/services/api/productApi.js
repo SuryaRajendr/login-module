@@ -32,4 +32,12 @@ export const deleteProduct = async (id) => {
   return resp.data.data;
 };
 
-export default { getProducts, createProduct, updateProduct, deleteProduct };
+export const bulkUploadProducts = async (payload) => {
+  const resp = await api.post("/api/supplier/products/bulk", payload);
+  if (!resp.data?.success) {
+    throw new Error(resp.data?.message || "Failed to upload products.");
+  }
+  return resp.data.data;
+};
+
+export default { getProducts, createProduct, updateProduct, deleteProduct, bulkUploadProducts };

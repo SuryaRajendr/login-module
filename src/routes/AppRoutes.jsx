@@ -12,6 +12,7 @@ import AdminPayments from "../pages/Admin/Payments";
 import SupplierDashboard from "../pages/Supplier/Dashboard";
 import SupplierStockList from "../pages/Supplier/StockList";
 import SupplierAddProduct from "../pages/Supplier/AddProduct";
+import SupplierBulkUpload from "../pages/Supplier/BulkUpload";
 import SupplierVendorRequests from "../pages/Supplier/VendorRequests";
 import VendorDashboard from "../pages/Vendor/Dashboard";
 import VendorBrowseProducts from "../pages/Vendor/BrowseProducts";
@@ -102,6 +103,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute role="supplier">
             <SupplierAddProduct />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/supplier/bulk-upload"
+        element={
+          <ProtectedRoute role="supplier">
+            <SupplierBulkUpload />
           </ProtectedRoute>
         }
       />

@@ -4,7 +4,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models.product import Product
-from app.schemas.product import ProductCreate, ProductUpdate
+from app.schemas.product import BulkProductRow, ProductCreate, ProductUpdate
 
 
 def get_products_for_supplier(db: Session, supplier_id: int) -> list[Product]:
@@ -26,6 +26,8 @@ def create_product(db: Session, supplier_id: int, payload: ProductCreate) -> Pro
         price=payload.price,
         status=payload.status,
         image_url=payload.image_url,
+        description=payload.description,
+        unit=payload.unit,
         supplier_id=supplier_id,
     )
     db.add(product)
@@ -49,6 +51,10 @@ def update_product(db: Session, product: Product, payload: ProductUpdate) -> Pro
         product.status = payload.status
     if payload.image_url is not None:
         product.image_url = payload.image_url
+    if payload.description is not None:
+        product.description = payload.description
+    if payload.unit is not None:
+        product.unit = payload.unit
 
     db.add(product)
     db.commit()
@@ -59,6 +65,58 @@ def update_product(db: Session, product: Product, payload: ProductUpdate) -> Pro
 def delete_product(db: Session, product: Product) -> None:
     db.delete(product)
     db.commit()
+
+
+def create_products_bulk(db: Session, supplier_id: int, payload: list[BulkProductRow]) -> list[Product]:
+    existing_skus = {
+        sku.lower()
+        for sku in db.scalars(
+            select(Product.sku).where(Product.supplier_id == supplier_id)
+        ).all()
+    }
+
+    uploaded_skus = set()
+    products_to_create = []
+    duplicates = []
+
+    for row in payload:
+        # determine SKU: use provided or generate from name
+        raw_sku = (row.sku or "").strip()
+        if not raw_sku:
+            # generate sku from name
+            raw_sku = "-".join(row.name.lower().split())[:60]
+
+        normalized_sku = raw_sku.lower()
+
+        if normalized_sku in uploaded_skus or normalized_sku in existing_skus:
+            duplicates.append(raw_sku)
+
+        uploaded_skus.add(normalized_sku)
+
+        products_to_create.append(
+            Product(
+                name=row.name,
+                sku=raw_sku,
+                category=row.category,
+                stock=row.stock,
+                price=row.price,
+                status=row.status,
+                image_url=row.image_url,
+                description=row.description,
+                unit=row.unit,
+                supplier_id=supplier_id,
+            )
+        )
+
+    if duplicates:
+        raise ValueError(f"Duplicate SKU values found: {', '.join(sorted(set(duplicates)))}")
+
+    db.add_all(products_to_create)
+    db.commit()
+    for product in products_to_create:
+        db.refresh(product)
+
+    return products_to_create
 
 
 def get_supplier_dashboard_stats(db: Session, supplier_id: int) -> dict:

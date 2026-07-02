@@ -34,6 +34,7 @@ const Sidebar = ({ role }) => {
     { label: "Dashboard", path: "/supplier/dashboard" },
     { label: "Stock List", path: "/supplier/stock-list" },
     { label: "Add Product", path: "/supplier/add-product" },
+    { label: "Bulk Upload Products", path: "/supplier/bulk-upload" },
     { label: "Orders", path: "/supplier/orders" },
     { label: "Vendor Requests", path: "/supplier/vendor-requests" },
     { label: "Profile", path: "/supplier/profile" },
